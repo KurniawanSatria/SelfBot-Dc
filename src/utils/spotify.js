@@ -37,60 +37,52 @@ let currentState = {
 async function submitListeningHistory(client, state) {
     const connectionId = process.env.SPOTIFY_CONNECTION_ID;
 
-    if (!connectionId || !state.track) return;
+    if (!connectionId || !state.track || !state.album || !state.artists) return;
 
     try {
+        const payload = {
+            connection_id: connectionId,
+            tracks: [{
+                id: state.track.id,
+                name: state.track.name,
+                duration: state.track.duration_ms,
+                type: "track",
+                album: {
+                    id: state.album.id,
+                    name: state.album.name,
+                    image: state.album.images?.[0]
+                        ? {
+                            height: state.album.images[0].height,
+                            url: state.album.images[0].url,
+                            width: state.album.images[0].width
+                        }
+                        : null,
+                    type: "album"
+                },
+                artists: state.artists.map(artist => ({
+                    external_urls: artist.external_urls || { spotify: `https://open.spotify.com/artist/${artist.id}` },
+                    href: artist.href || `https://api.spotify.com/v1/artists/${artist.id}`,
+                    id: artist.id,
+                    name: artist.name,
+                    type: "artist",
+                    uri: artist.uri || `spotify:artist:${artist.id}`
+                })),
+                isLocal: false
+            }]
+        };
+
         await axios.post(
             "https://discord.com/api/v9/content-inventory/users/@me/spotify",
-            {
-                connection_id: connectionId,
-                tracks: [{
-                    id: state.track.id,
-                    name: state.track.name,
-                    duration: state.track.duration_ms,
-                    type: "track",
-                    album: {
-                        id: state.album.id,
-                        name: state.album.name,
-                        image: state.album.images?.[0]
-                            ? {
-                                height: state.album.images[0].height,
-                                width: state.album.images[0].width,
-                                url: state.album.images[0].url
-                            }
-                            : null,
-                        type: "album"
-                    },
-                    artists: state.artists,
-                    isLocal: false
-                }]
-            },
+            payload,
             {
                 headers: {
-                    Authorization: client.token
+                    Authorization: client.token,
+                    'Content-Type': 'application/json'
                 }
             }
         );
 
-        // Verify submission via outbox
-        try {
-            const { data: outbox } = await axios.get(
-                `https://discord.com/api/v9/content-inventory/users/${client.user.id}/outbox`,
-                { headers: { Authorization: client.token } }
-            );
-            const found = outbox?.entries?.some(e =>
-                e.extra?.entries?.some(sub =>
-                    sub.media?.external_id === state.track.id
-                )
-            );
-            if (found) {
-                log(chalk.hex('#E5E7EB')(`Track verified in outbox: ${state.track.name}`));
-            } else {
-                logError(`Track NOT found in outbox: ${state.track.name}`);
-            }
-        } catch (err) {
-            logError(`Failed to check outbox: ${err.message}`);
-        }
+        log(chalk.hex('#22C55E')(`Track submitted: ${state.track.name}`));
     } catch (err) {
         logError(`Failed to submit history: ${err.message}`);
     }

@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "start": "node index.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@discordjs/voice": "^0.18.0",
+    "axios": "^1.16.1",
+    "chalk": "^4.1.2",
+    "cheerio": "^1.2.0",
+    "debug": "^4.4.3",
+    "discord-protos": "^1.2.215",
+    "discord.js-selfbot-v13": "github:002-sans/djs-selfbot-v13",
+    "dotenv": "^17.4.2",
+    "figlet": "^1.11.0",
+    "moment-timezone": "^0.6.2",
+    "thirty-two": "^1.0.2",
+    "ws": "^8.21.0"
+  }
+}

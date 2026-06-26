@@ -1,3 +1,6 @@
+> [!WARNING]
+> This project is a Discord selfbot. Selfbots violate Discord's Terms of Service and may result in account suspension or termination. Use this project only on accounts you are willing to risk.
+
 # Discord SelfBot
 
 Discord selfbot with auto voice channel join and Spotify presence integration.
@@ -111,10 +114,6 @@ Console output uses custom color palette:
 - `moment-timezone` - Time formatting
 - `dotenv` - Environment variables
 - `discord-protos` - Protocol buffer handling
-
-## Disclaimer
-
-**Discord selfbots are against Discord Terms of Service.** Use at your own risk. This project is for educational purposes only.
 
 ## Author
 

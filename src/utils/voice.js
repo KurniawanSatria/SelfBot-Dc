@@ -1,37 +1,31 @@
 import { joinVoiceChannel } from '@discordjs/voice';
-import { AUTO_JOIN_GUILD_ID, AUTO_JOIN_CHANNEL_ID } from '../config.js';
 import chalk from 'chalk';
 import moment from 'moment-timezone';
 
 moment.tz.setDefault('Asia/Jakarta');
 
-export function isRealDevice(state) {
-    return state.selfDeaf === false;
-}
-
 export async function tryAutoJoin(client) {
     if (client.realDeviceInVC || client.InVC) return;
 
-    const guild = client.guilds.cache.get(AUTO_JOIN_GUILD_ID);
+    const { autoJoinGuildId, autoJoinChannelId } = client.config;
+
+    const guild = client.guilds.cache.get(autoJoinGuildId);
     if (!guild) return;
 
-    const channel = client.channels.cache.get(AUTO_JOIN_CHANNEL_ID);
+    const channel = client.channels.cache.get(autoJoinChannelId);
     if (!channel) return;
 
-    const hasRealDevice = guild.voiceStates.cache.some(state =>
+    // Real device = same account (client.user.id) is in VC from another device, not fully deafened
+    const isRealDevice = (state) =>
         state.channelId === channel.id &&
         state.member &&
-        state.member.id !== client.user.id &&
-        state.selfDeaf === false
-    );
+        state.member.id === client.user.id &&
+        state.selfDeaf === false;
+
+    const hasRealDevice = guild.voiceStates.cache.some(isRealDevice);
     if (hasRealDevice) {
         await new Promise(r => setTimeout(r, 1500));
-        const stillPresent = guild.voiceStates.cache.some(state =>
-            state.channelId === channel.id &&
-            state.member &&
-            state.member.id !== client.user.id &&
-            state.selfDeaf === false
-        );
+        const stillPresent = guild.voiceStates.cache.some(isRealDevice);
         if (!stillPresent) {
             console.log(
                 chalk.hex('#71717A')(`[${moment().format('HH:mm')}]`),
@@ -40,15 +34,15 @@ export async function tryAutoJoin(client) {
             );
         } else {
             client.realDeviceInVC = true;
-            console.log(chalk.hex('#71717A')(`[${moment().format('HH:mm')}]`), chalk.hex('#60A5FA').underline(client.user.username), chalk.hex('#E5E7EB')('Real device already in VC — not auto‑joining'));
+            console.log(chalk.hex('#71717A')(`[${moment().format('HH:mm')}]`), chalk.hex('#60A5FA').underline(client.user.username), chalk.hex('#E5E7EB')('Account already in VC from another device — not auto‑joining'));
             return;
         }
     }
 
     try {
         joinVoiceChannel({
-            channelId: AUTO_JOIN_CHANNEL_ID,
-            guildId: AUTO_JOIN_GUILD_ID,
+            channelId: autoJoinChannelId,
+            guildId: autoJoinGuildId,
             adapterCreator: guild.voiceAdapterCreator,
             selfDeaf: true,
             selfMute: true,

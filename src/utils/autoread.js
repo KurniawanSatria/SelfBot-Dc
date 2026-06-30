@@ -1,4 +1,3 @@
-import { AUTOREAD_ENABLED, AUTOREAD_EXCLUDED_GUILD_IDS } from "../config.js";
 import chalk from "chalk";
 import moment from "moment-timezone";
 
@@ -12,9 +11,10 @@ const delay = (ms) => new Promise((r) => setTimeout(r, ms));
  * Adds a small delay between acks to avoid rate-limits.
  */
 export async function autoReadAll(client) {
-  if (!AUTOREAD_ENABLED) return;
+  const { autoreadEnabled, autoreadExcludedGuildIds } = client.config;
+  if (!autoreadEnabled) return;
 
-  const excluded = new Set(AUTOREAD_EXCLUDED_GUILD_IDS);
+  const excluded = new Set(autoreadExcludedGuildIds);
   const guilds = client.guilds.cache.filter((g) => !excluded.has(g.id));
 
   let total = 0;

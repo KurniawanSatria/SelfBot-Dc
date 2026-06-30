@@ -3,7 +3,6 @@ import axios from 'axios';
 import WebSocket from 'ws';
 import chalk from 'chalk';
 import moment from 'moment-timezone';
-import { SPOTIFY_CONNECTION_ID } from '../config.js';
 
 moment.tz.setDefault('Asia/Jakarta');
 
@@ -36,7 +35,7 @@ let currentState = {
 
 
 async function submitListeningHistory(client, state) {
-    const connectionId = SPOTIFY_CONNECTION_ID;
+    const connectionId = client.config.spotifyConnectionId;
 
     if (!connectionId || !state.track || !state.album || !state.artists) return;
 
@@ -91,7 +90,7 @@ async function submitListeningHistory(client, state) {
 
 async function getSpotifyToken(client) {
     try {
-        const connectionId = SPOTIFY_CONNECTION_ID;
+        const connectionId = client.config.spotifyConnectionId;
         if (!connectionId) {
             logError('SPOTIFY_CONNECTION_ID not set in environment');
             return null;

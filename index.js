@@ -1,13 +1,10 @@
-import { fork } from "child_process";
-import { readFileSync, existsSync } from "fs";
-import { join } from "path";
 import figlet from "figlet";
 import chalk from "chalk";
+import { loadAccounts } from "./src/config.js";
+import { startAllClients } from "./src/index.js";
 
-const accountsPath = join(process.cwd(), "accounts.config.json");
-const accounts = existsSync(accountsPath)
-  ? JSON.parse(readFileSync(accountsPath, "utf-8"))
-  : [];
+const accounts = loadAccounts();
+const line = "═".repeat(47);
 
 console.clear();
 
@@ -27,7 +24,6 @@ const banner = await new Promise((resolve, reject) => {
     }
   );
 });
-const line = "═".repeat(47);
 
 console.log(chalk.hex("#6C8CFF")(banner));
 console.log(chalk.hex("#4B5563")(line));
@@ -36,11 +32,7 @@ console.log(chalk.hex("#22C55E")("Version: 1.0.0"));
 console.log(chalk.hex("#FACC15")(`Accounts: ${accounts.length}`));
 console.log(chalk.hex("#4B5563")(line));
 
-accounts.forEach((account, i) => {
-  fork("./bot.js", [], {
-    env: {
-      ...process.env,
-      ACCOUNT_INDEX: String(i),
-    },
-  });
+startAllClients(accounts).catch((err) => {
+  console.error(chalk.hex("#EF4444")("Failed:", err));
+  process.exit(1);
 });

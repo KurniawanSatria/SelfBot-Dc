@@ -5,8 +5,8 @@ import moment from 'moment-timezone';
 
 moment.tz.setDefault('Asia/Jakarta');
 
-export function isRealDevice(client, state) {
-    return state.user?.id === client.user.id && state.selfDeaf === false;
+export function isRealDevice(state) {
+    return state.selfDeaf === false;
 }
 
 export async function tryAutoJoin(client) {

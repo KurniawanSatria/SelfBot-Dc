@@ -3,6 +3,7 @@ import { TOKEN } from "./config.js";
 import ready from "./events/ready.js";
 import voiceStateUpdate from "./events/voiceStateUpdate.js";
 import unhandledPacket from "./events/unhandledPacket.js";
+import messageCreate from "./events/messageCreate.js";
 
 export function createClient() {
   const client = new Client();
@@ -14,6 +15,7 @@ export function createClient() {
   client.on("ready", (...args) => ready(client, ...args));
   client.on("voiceStateUpdate", (...args) => voiceStateUpdate(client, ...args));
   client.on("unhandledPacket", (...args) => unhandledPacket(client, ...args));
+  client.on("messageCreate", (...args) => messageCreate(client, ...args));
 
   return client;
 }

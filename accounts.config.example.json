@@ -1,0 +1,20 @@
+[
+  {
+    "token": "your_discord_token_here",
+    "autoJoinGuildId": "",
+    "autoJoinChannelId": "",
+    "spotifyConnectionId": "",
+    "webhookUrl": "",
+    "autoread": true,
+    "autoreadExcludedGuildIds": []
+  },
+  {
+    "token": "your_second_token_here",
+    "autoJoinGuildId": "",
+    "autoJoinChannelId": "",
+    "spotifyConnectionId": "",
+    "webhookUrl": "",
+    "autoread": false,
+    "autoreadExcludedGuildIds": ["excluded_guild_id_1", "excluded_guild_id_2"]
+  }
+]

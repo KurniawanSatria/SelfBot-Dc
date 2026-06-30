@@ -4,7 +4,6 @@
     "autoJoinGuildId": "",
     "autoJoinChannelId": "",
     "spotifyConnectionId": "",
-    "webhookUrl": "",
     "autoread": true,
     "autoreadExcludedGuildIds": []
   },
@@ -13,7 +12,6 @@
     "autoJoinGuildId": "",
     "autoJoinChannelId": "",
     "spotifyConnectionId": "",
-    "webhookUrl": "",
     "autoread": false,
     "autoreadExcludedGuildIds": ["excluded_guild_id_1", "excluded_guild_id_2"]
   }
